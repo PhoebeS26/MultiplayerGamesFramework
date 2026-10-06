@@ -1,31 +1,35 @@
-# C# Multiplayer Games Framework
+# Multiplayer Games Framework
 
-A C# multiplayer networking project exploring client-server communication, TCP/UDP networking, packet handling, game-state synchronisation and encrypted communication.
+A C# and MonoGame multiplayer networking project exploring client-server communication, TCP/UDP networking and synchronisation of game objects.
 
 ## Overview
 
-This project was developed to explore how multiplayer game networking can be implemented using C# and .NET networking APIs.
+This project was developed using **C# and MonoGame** to explore multiplayer networking and the systems required to communicate and synchronise game objects between clients.
 
-The project uses a client-server architecture where clients connect to a central server. The server manages connected clients and handles different types of network packets, including player/object positions and game-state information.
-
-The project also includes a separate UDP communication path for position updates and an RSA-based encryption experiment.
+The project includes a client-server architecture using TCP and UDP, a custom packet system, JSON serialisation, client management, game-state synchronisation and encrypted communication.
 
 ## Features
 
-* TCP client-server communication using `TcpListener` and sockets
-* UDP communication using `UdpClient`
-* Multiple connected clients
-* Unique client ID assignment and ID reuse
-* Thread-safe client management
-* Packet-based network communication
+* C# client-server architecture
+* TCP networking using sockets and `NetworkStream`
+* UDP networking for position updates
+* Client connection and disconnection handling
+* Unique client ID assignment
+* Custom packet-based communication system
 * JSON serialisation and deserialisation
-* Custom packet type handling
-* Player/object position synchronisation
-* Game-state synchronisation
-* Asynchronous UDP communication
-* RSA public-key encryption/decryption experiment
-* Connection and disconnection handling
-* Error handling and network debugging
+* Player and object position synchronisation
+* Game-state and score synchronisation
+* Multithreading and asynchronous networking
+* Thread-safe collections for connected clients
+* RSA public-key encryption
+* MonoGame-based multiplayer game
+
+## Controls
+
+* **W** — Move paddle up
+* **S** — Move paddle down
+
+The game supports two players, with each client controlling either the left or right paddle depending on their assigned client ID.
 
 ## Technologies
 
@@ -33,87 +37,91 @@ The project also includes a separate UDP communication path for position updates
 
 * C#
 
+**Frameworks & Libraries**
+
+* MonoGame
+* .NET
+* Aether Physics 2D
+
 **Networking**
 
 * TCP
 * UDP
-* Sockets
+* C# Sockets
+* `TcpListener`
+* `UdpClient`
 * `NetworkStream`
 
 **Other**
 
 * JSON serialisation
+* RSA encryption
 * Multithreading
 * Asynchronous programming
-* RSA encryption
-* Git / GitHub
+* Visual Studio
+* GitHub
 
-## Networking Architecture
+## Networking
 
-The server manages TCP connections using `TcpListener`. Each connected client is assigned a unique ID and represented by a `ConnectedUser` object.
+The project uses both TCP and UDP for different types of communication.
 
-TCP communication is used for reliable messages and game-state information, while UDP is used for position updates where lower communication overhead is useful.
+TCP is used for reliable communication such as messages, client ID assignment and game-state updates.
 
-```text
-Client
-  │
-  ├── TCP ───────────────┐
-  │                      │
-  └── UDP ───────────────┤
-                         ▼
-                    Game Server
-                         │
-                 ┌───────┴───────┐
-                 │               │
-             Client 1         Client 2
-```
+UDP is used for frequently updated positional information, such as paddle and ball movement, where low-latency communication is more important.
 
 ## Packet System
 
-Network messages are represented using different packet types derived from a common `Packet` class.
+A custom packet system was developed to structure and serialise different types of network messages.
 
-Examples include:
+Packet types include:
 
-* `MessagePacket`
-* `AssignClientIDPacket`
-* `PositionPacket`
-* `UdpPositionPacket`
-* `GameStatePacket`
-* `EncryptPacket`
-* `PublicKeyPacket`
+* Messages
+* Client ID assignment
+* Object positions
+* UDP position updates
+* Game-state updates
+* Encrypted packets
+* Public key exchange
 
-Packets are serialised to JSON before being transmitted. The receiving side uses the packet type contained in the JSON data to deserialise it into the appropriate packet class.
+Packets are serialised to JSON before being transmitted and deserialised when received.
 
-## Client Management
+## Client & Server
 
-The server maintains connected clients using a thread-safe `ConcurrentDictionary`.
+The server manages connected clients and assigns each client a unique ID.
 
-Each client receives a unique ID when connecting. When a client disconnects, its ID is placed into a queue so that it can be reused by a future connection.
+The client establishes both TCP and UDP connections to the server and processes incoming network messages asynchronously.
 
-The server also stores each client's UDP endpoint so that UDP position updates can be forwarded to other connected clients.
+Connected clients are managed using thread-safe collections, while separate processing is used for TCP and UDP communication.
 
-## Encryption Experiment
+## Encryption
 
-The project includes an experiment with RSA encryption.
+The project also explores encrypted communication using RSA public-key encryption.
 
-When a client connects, the server generates an RSA key pair and sends its public key to the client. Encrypted packets can then be received by the server and decrypted using its private key before being converted back into the original packet.
+The server provides its public key to the client, which can then use the key to encrypt messages before sending them to the server.
 
-This was implemented to explore how encrypted data could be incorporated into a networked application.
+## What I Worked On
+
+I worked on the networking systems used to connect clients and synchronise game objects.
+
+This included working with C# sockets, TCP and UDP communication, `NetworkStream`, JSON serialisation, custom packet structures, client management and asynchronous networking.
+
+I also worked with game-state synchronisation, including player positions, ball movement, scores and win conditions.
 
 ## What I Learned
 
-This project helped me develop practical experience with:
+This project gave me practical experience with:
 
+* C# programming
 * Client-server architecture
 * TCP and UDP networking
 * Socket programming
-* Serialisation and structured network data
+* JSON serialisation
 * Multithreading and asynchronous programming
-* Managing multiple connected clients
-* Handling network errors and disconnections
-* Basic encrypted communication
-* Designing reusable packet-based systems
+* Networked object synchronisation
+* Encryption
+* Debugging network communication
+* Working with a multiplayer game architecture
 
-## Project Status
+## Status
 
-This project was developed as a learning project to explore multiplayer networking concepts. It is not intended to be a production-ready networking solution.
+This is a learning project developed to explore multiplayer networking and client-server communication using C# and MonoGame.
